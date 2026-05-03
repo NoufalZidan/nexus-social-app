@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import { AiOutlineHeart, AiFillHeart, AiOutlineComment } from "react-icons/ai";
+import { Link } from "react-router-dom";
 
 const PostCard = ({ post, currentUser }) => {
   const [liked, setLiked] = useState(false);
@@ -87,9 +88,11 @@ const PostCard = ({ post, currentUser }) => {
         <div className="w-8 h-8 rounded-full bg-slate-300 flex items-center justify-center text-sm font-bold text-slate-600">
           {post.profiles?.username?.[0].toUpperCase()}
         </div>
-        <span className="font-medium text-slate-800">
-          {post.profiles?.username}
-        </span>
+        <Link to={`/profile/${post.user_id}`}>
+          <span className="font-medium text-slate-800">
+            {post.profiles?.username}
+          </span>
+        </Link>
       </div>
 
       {/* Foto */}
@@ -121,9 +124,11 @@ const PostCard = ({ post, currentUser }) => {
 
       {/* Caption */}
       <div className="px-4 py-2">
-        <span className="font-medium text-slate-800 text-sm">
-          {post.profiles?.username}
-        </span>{" "}
+        <Link to={`/profile/${post.user_id}`}>
+          <span className="font-medium text-slate-800 text-sm">
+            {post.profiles?.username}
+          </span>{" "}
+        </Link>
         <span className="text-slate-600 text-sm">{post.caption}</span>
       </div>
 
