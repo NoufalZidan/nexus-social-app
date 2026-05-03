@@ -34,6 +34,10 @@ const Home = () => {
     setPosts((prev) => [newPost, ...prev]);
   };
 
+  const handleDeletePost = (postId) => {
+    setPosts((prev) => prev.filter((post) => post.id !== postId));
+  };
+
   return (
     <div className="flex">
       <Navbar onCreatePost={() => setShowCreatePost(true)} />
@@ -53,9 +57,15 @@ const Home = () => {
             </div>
           )}
 
-          {!loading && posts.map((post) => (
-            <PostCard key={post.id} post={post} currentUser={currentUser} />
-          ))}
+          {!loading &&
+            posts.map((post) => (
+              <PostCard
+                key={post.id}
+                post={post}
+                currentUser={currentUser}
+                onDelete={handleDeletePost}
+              />
+            ))}
         </div>
       </main>
 

@@ -1,16 +1,20 @@
 import { useState, useEffect } from "react";
-import { supabase } from "../lib/supabase";
-import { AiOutlineHeart, AiFillHeart, AiOutlineComment } from "react-icons/ai";
 import { Link } from "react-router-dom";
+import { supabase } from "../lib/supabase";
+import {
+  AiOutlineHeart,
+  AiFillHeart,
+  AiOutlineComment,
+  AiOutlineDelete,
+} from "react-icons/ai";
 
-const PostCard = ({ post, currentUser }) => {
+const PostCard = ({ post, currentUser, onDelete }) => {
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState("");
   const [showComments, setShowComments] = useState(false);
 
-  // Ambil likes & cek apakah user sudah like
   useEffect(() => {
     const fetchLikes = async () => {
       const { data } = await supabase
@@ -25,7 +29,6 @@ const PostCard = ({ post, currentUser }) => {
     fetchLikes();
   }, [post.id]);
 
-  // Ambil comments
   useEffect(() => {
     const fetchComments = async () => {
       const { data } = await supabase
@@ -40,7 +43,17 @@ const PostCard = ({ post, currentUser }) => {
     fetchComments();
   }, [post.id]);
 
-  // Toggle like
+  const sendNotification = async (type, postOwnerId) => {
+    if (postOwnerId === currentUser.id) return;
+
+    await supabase.from("notifications").insert({
+      receiver_id: postOwnerId,
+      sender_id: currentUser.id,
+      type,
+      post_id: post.id,
+    });
+  };
+
   const handleLike = async () => {
     if (liked) {
       await supabase
@@ -62,7 +75,6 @@ const PostCard = ({ post, currentUser }) => {
     }
   };
 
-  // Kirim komentar
   const handleComment = async () => {
     if (!commentText.trim()) return;
 
@@ -81,30 +93,40 @@ const PostCard = ({ post, currentUser }) => {
     await sendNotification("comment", post.user_id);
   };
 
-  const sendNotification = async (type, postOwnerId) => {
-    // Jangan kirim notifikasi ke diri sendiri
-    if (postOwnerId === currentUser.id) return;
+  const handleDelete = async () => {
+    const confirm = window.confirm("Hapus post ini?");
+    if (!confirm) return;
 
-    await supabase.from("notifications").insert({
-      receiver_id: postOwnerId,
-      sender_id: currentUser.id,
-      type,
-      post_id: post.id,
-    });
+    const fileName = post.image_url.split("/").pop();
+    await supabase.storage.from("posts").remove([fileName]);
+    await supabase.from("posts").delete().eq("id", post.id);
+
+    onDelete(post.id);
   };
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-4">
-      {/* Header - avatar & username */}
-      <div className="flex items-center gap-3 px-4 py-3">
-        <div className="w-8 h-8 rounded-full bg-slate-300 flex items-center justify-center text-sm font-bold text-slate-600">
-          {post.profiles?.username?.[0].toUpperCase()}
+      {/* Header */}
+      <div className="flex items-center justify-between px-4 py-3">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-full bg-slate-300 flex items-center justify-center text-sm font-bold text-slate-600">
+            {post.profiles?.username?.[0].toUpperCase()}
+          </div>
+          <Link to={`/profile/${post.user_id}`}>
+            <span className="font-medium text-slate-800">
+              {post.profiles?.username}
+            </span>
+          </Link>
         </div>
-        <Link to={`/profile/${post.user_id}`}>
-          <span className="font-medium text-slate-800">
-            {post.profiles?.username}
-          </span>
-        </Link>
+
+        {currentUser?.id === post.user_id && (
+          <button
+            onClick={handleDelete}
+            className="text-slate-400 cursor-pointer hover:text-red-500 transition"
+          >
+            <AiOutlineDelete className="text-xl" />
+          </button>
+        )}
       </div>
 
       {/* Foto */}
@@ -116,7 +138,7 @@ const PostCard = ({ post, currentUser }) => {
 
       {/* Like & Comment buttons */}
       <div className="px-4 pt-3 flex items-center gap-4">
-        <button onClick={handleLike} className="flex items-center gap-1 cursor-pointer">
+        <button onClick={handleLike} className="flex items-center gap-1">
           {liked ? (
             <AiFillHeart className="text-2xl text-red-500" />
           ) : (
@@ -127,7 +149,7 @@ const PostCard = ({ post, currentUser }) => {
 
         <button
           onClick={() => setShowComments((prev) => !prev)}
-          className="flex items-center gap-1 cursor-pointer"
+          className="flex items-center gap-1"
         >
           <AiOutlineComment className="text-2xl text-slate-600" />
           <span className="text-sm text-slate-600">{comments.length}</span>
@@ -147,7 +169,6 @@ const PostCard = ({ post, currentUser }) => {
       {/* Comments */}
       {showComments && (
         <div className="px-4 pb-3">
-          {/* List komentar */}
           <div className="space-y-1 mb-2">
             {comments.map((comment) => (
               <div key={comment.id} className="text-sm">
@@ -159,7 +180,6 @@ const PostCard = ({ post, currentUser }) => {
             ))}
           </div>
 
-          {/* Input komentar */}
           <div className="flex gap-2 mt-2">
             <input
               type="text"

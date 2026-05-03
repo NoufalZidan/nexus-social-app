@@ -161,9 +161,10 @@ const Profile = () => {
                   onClick={handleFollow}
                   disabled={followLoading}
                   className={`mt-4 w-full font-medium py-2 rounded-xl transition text-sm disabled:opacity-50
-                    ${isFollowing
-                      ? "border border-slate-300 text-slate-700 hover:bg-slate-50"
-                      : "bg-slate-800 text-white hover:bg-slate-700"
+                    ${
+                      isFollowing
+                        ? "border border-slate-300 text-slate-700 hover:bg-slate-50"
+                        : "bg-slate-800 text-white hover:bg-slate-700"
                     }`}
                 >
                   {followLoading ? "..." : isFollowing ? "Unfollow" : "Follow"}
@@ -182,9 +183,15 @@ const Profile = () => {
             </div>
           )}
 
-          {!loading && posts.map((post) => (
-            <PostCard key={post.id} post={post} currentUser={currentUser} />
-          ))}
+          {!loading &&
+            posts.map((post) => (
+              <PostCard
+                key={post.id}
+                post={post}
+                currentUser={currentUser}
+                onDelete={handleDeletePost}
+              />
+            ))}
         </div>
       </main>
 
