@@ -8,7 +8,7 @@ import { AiOutlineSearch } from "react-icons/ai";
 import { AiOutlineUser } from "react-icons/ai";
 import { AiOutlineLogout } from "react-icons/ai";
 
-const Navbar = () => {
+const Navbar = ({ onCreatePost }) => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
 
@@ -58,7 +58,7 @@ const Navbar = () => {
         </Link>
 
         <button
-          onClick={() => navigate("/create")}
+          onClick={onCreatePost}
           className="flex items-center gap-3 px-3 py-3 rounded-xl cursor-pointer hover:bg-slate-100 text-slate-700 transition w-full"
         >
           <AiOutlinePlusSquare className="text-xl" />
