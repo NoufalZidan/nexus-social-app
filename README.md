@@ -4,8 +4,6 @@ A social media web application built with React, Vite, Tailwind CSS, and Supabas
 
 ## Screenshots
 
-> Add your screenshots here
-
 | Home Feed | Profile Page |
 |---|---|
 | ![Home Feed](public/home.png) | ![Profile](public/profile.png) |
