@@ -43,7 +43,6 @@ const PostCard = ({ post, currentUser }) => {
   // Toggle like
   const handleLike = async () => {
     if (liked) {
-      // Unlike
       await supabase
         .from("likes")
         .delete()
@@ -53,13 +52,13 @@ const PostCard = ({ post, currentUser }) => {
       setLiked(false);
       setLikeCount((prev) => prev - 1);
     } else {
-      // Like
       await supabase
         .from("likes")
         .insert({ post_id: post.id, user_id: currentUser.id });
 
       setLiked(true);
       setLikeCount((prev) => prev + 1);
+      await sendNotification("like", post.user_id);
     }
   };
 
@@ -79,6 +78,19 @@ const PostCard = ({ post, currentUser }) => {
 
     setComments((prev) => [...prev, data]);
     setCommentText("");
+    await sendNotification("comment", post.user_id);
+  };
+
+  const sendNotification = async (type, postOwnerId) => {
+    // Jangan kirim notifikasi ke diri sendiri
+    if (postOwnerId === currentUser.id) return;
+
+    await supabase.from("notifications").insert({
+      receiver_id: postOwnerId,
+      sender_id: currentUser.id,
+      type,
+      post_id: post.id,
+    });
   };
 
   return (
@@ -104,7 +116,7 @@ const PostCard = ({ post, currentUser }) => {
 
       {/* Like & Comment buttons */}
       <div className="px-4 pt-3 flex items-center gap-4">
-        <button onClick={handleLike} className="flex items-center gap-1">
+        <button onClick={handleLike} className="flex items-center gap-1 cursor-pointer">
           {liked ? (
             <AiFillHeart className="text-2xl text-red-500" />
           ) : (
@@ -115,7 +127,7 @@ const PostCard = ({ post, currentUser }) => {
 
         <button
           onClick={() => setShowComments((prev) => !prev)}
-          className="flex items-center gap-1"
+          className="flex items-center gap-1 cursor-pointer"
         >
           <AiOutlineComment className="text-2xl text-slate-600" />
           <span className="text-sm text-slate-600">{comments.length}</span>
