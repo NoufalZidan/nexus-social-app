@@ -111,6 +111,10 @@ const Profile = () => {
     setFollowLoading(false);
   };
 
+  const handleDeletePost = (postId) => {
+    setPosts((prev) => prev.filter((post) => post.id !== postId));
+  };
+
   return (
     <div className="flex">
       <Navbar onCreatePost={() => setShowCreatePost(true)} />
