@@ -86,7 +86,7 @@ const EditProfile = ({ profile, onClose, onProfileUpdated }) => {
         <button
           onClick={handleSubmit}
           disabled={loading}
-          className="w-full bg-slate-800 text-white font-semibold py-3 rounded-xl hover:bg-slate-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-slate-800 text-white font-semibold py-3 rounded-xl cursor-pointer hover:bg-slate-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? "Menyimpan..." : "Simpan"}
         </button>

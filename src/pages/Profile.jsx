@@ -154,7 +154,7 @@ const Profile = () => {
               {isOwnProfile && (
                 <button
                   onClick={() => setShowEditProfile(true)}
-                  className="mt-4 w-full border border-slate-300 text-slate-700 font-medium py-2 rounded-xl hover:bg-slate-50 transition text-sm"
+                  className="mt-4 w-full border border-slate-300 text-slate-700 font-medium py-2 rounded-xl cursor-pointer hover:bg-slate-50 transition text-sm"
                 >
                   Edit Profile
                 </button>
@@ -164,7 +164,7 @@ const Profile = () => {
                 <button
                   onClick={handleFollow}
                   disabled={followLoading}
-                  className={`mt-4 w-full font-medium py-2 rounded-xl transition text-sm disabled:opacity-50
+                  className={`mt-4 w-full font-medium py-2 rounded-xl transition text-sm cursor-pointer disabled:opacity-50
                     ${
                       isFollowing
                         ? "border border-slate-300 text-slate-700 hover:bg-slate-50"

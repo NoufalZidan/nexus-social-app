@@ -138,7 +138,7 @@ const PostCard = ({ post, currentUser, onDelete }) => {
 
       {/* Like & Comment buttons */}
       <div className="px-4 pt-3 flex items-center gap-4">
-        <button onClick={handleLike} className="flex items-center gap-1">
+        <button onClick={handleLike} className="flex items-center gap-1 cursor-pointer">
           {liked ? (
             <AiFillHeart className="text-2xl text-red-500" />
           ) : (
@@ -149,7 +149,7 @@ const PostCard = ({ post, currentUser, onDelete }) => {
 
         <button
           onClick={() => setShowComments((prev) => !prev)}
-          className="flex items-center gap-1"
+          className="flex items-center gap-1 cursor-pointer"
         >
           <AiOutlineComment className="text-2xl text-slate-600" />
           <span className="text-sm text-slate-600">{comments.length}</span>
